@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import ProductCard from '../components/ProductCard';
+import ConfirmDialog from '../components/ConfirmDialog';
+import Toast from '../components/Toast';
 import api from '../api/axios';
 
 const FALLBACK_CATEGORIES = ['Electronics', 'Clothing', 'Grocery', 'Furniture', 'Books'];
@@ -23,9 +26,16 @@ function SkeletonCard() {
 }
 
 export default function ProductListing() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState(FALLBACK_CATEGORIES);
   const [statuses, setStatuses] = useState(FALLBACK_STATUSES);
+
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const [toast, setToast] = useState(location.state?.flash || null);
 
   const [searchInput, setSearchInput] = useState('');
   const [search, setSearch] = useState('');
@@ -36,6 +46,15 @@ export default function ProductListing() {
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Consume a one-time flash message passed via navigation state (e.g. after
+  // creating/editing/deleting a product) and strip it from history state.
+  useEffect(() => {
+    if (location.state?.flash) {
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Debounce the search box so we don't fire a request on every keystroke.
   // A filter change should also snap the user back to page 1.
@@ -96,6 +115,27 @@ export default function ProductListing() {
     fetchProducts();
   }, [fetchProducts]);
 
+  const confirmDelete = async () => {
+    if (!deleteTarget) return;
+    setDeleting(true);
+    try {
+      await api.delete(`/products/${deleteTarget._id}`);
+      setDeleteTarget(null);
+      setToast({ type: 'success', message: `"${deleteTarget.name}" was deleted` });
+      // Refetch so pagination/counts stay accurate; if this was the last item
+      // on a page beyond the first, step back a page.
+      if (products.length === 1 && page > 1) {
+        setPage((p) => p - 1);
+      } else {
+        fetchProducts();
+      }
+    } catch (err) {
+      setToast({ type: 'error', message: err.response?.data?.message || 'Could not delete this product.' });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const hasActiveFilters = Boolean(search) || category !== 'All' || status !== 'All';
 
   const clearFilters = () => {
@@ -130,10 +170,10 @@ export default function ProductListing() {
                 : `${pagination.total} product${pagination.total === 1 ? '' : 's'} in your catalog`}
             </p>
           </div>
-          {/* Wired up in Phase 5 (Add Product form) */}
           <button
             type="button"
             title="Add Product"
+            onClick={() => navigate('/products/new')}
             className="inline-flex items-center gap-2 rounded-lg bg-accent px-4 py-2.5 text-sm font-semibold text-brand transition hover:bg-accent-dark"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -243,7 +283,7 @@ export default function ProductListing() {
           ) : (
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {products.map((product, i) => (
-                <ProductCard key={product._id} product={product} index={i} />
+                <ProductCard key={product._id} product={product} index={i} onDelete={setDeleteTarget} />
               ))}
             </div>
           )}
@@ -289,6 +329,19 @@ export default function ProductListing() {
           )}
         </div>
       </div>
+
+      <ConfirmDialog
+        open={Boolean(deleteTarget)}
+        danger
+        title="Delete this product?"
+        message={deleteTarget ? `"${deleteTarget.name}" will be removed from your listing. This can be recovered from the database if needed.` : ''}
+        confirmLabel="Delete"
+        loading={deleting}
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
+
+      <Toast toast={toast} onClose={() => setToast(null)} />
     </div>
   );
 }

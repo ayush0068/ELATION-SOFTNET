@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { getImageUrl } from '../utils/imageUrl';
 
 const CATEGORY_STYLES = {
@@ -15,13 +16,16 @@ const formatPrice = (value) =>
     maximumFractionDigits: 0,
   }).format(value);
 
-export default function ProductCard({ product, index = 0 }) {
+export default function ProductCard({ product, index = 0, onDelete }) {
+  const navigate = useNavigate();
   const hasDiscount = product.discountPrice != null && product.discountPrice < product.price;
+  const discountPercent = hasDiscount ? Math.round(100 - (product.discountPrice / product.price) * 100) : 0;
   const imageUrl = getImageUrl(product.picture);
 
   return (
     <div
-      className="animate-card-in group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-ink/5"
+      onClick={() => navigate(`/products/${product._id}`)}
+      className="animate-card-in group flex cursor-pointer flex-col overflow-hidden rounded-xl border border-border bg-surface transition duration-200 hover:-translate-y-1 hover:shadow-lg hover:shadow-ink/5"
       style={{ animationDelay: `${Math.min(index * 40, 400)}ms` }}
     >
       <div className="relative aspect-[4/3] w-full overflow-hidden bg-canvas">
@@ -48,6 +52,11 @@ export default function ProductCard({ product, index = 0 }) {
         >
           {product.status}
         </span>
+        {hasDiscount && (
+          <span className="absolute right-2.5 top-2.5 rounded-full bg-success px-2.5 py-1 text-xs font-bold text-white shadow-sm">
+            {discountPercent}% OFF
+          </span>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col gap-2 p-4">
@@ -81,10 +90,13 @@ export default function ProductCard({ product, index = 0 }) {
           </div>
 
           <div className="flex items-center gap-1.5">
-            {/* Wired up in Phase 5 (Edit Product form) */}
             <button
               type="button"
               title="Edit"
+              onClick={(e) => {
+                e.stopPropagation();
+                navigate(`/products/${product._id}/edit`);
+              }}
               className="rounded-lg border border-border p-2 text-muted transition hover:border-brand hover:text-brand"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -92,10 +104,13 @@ export default function ProductCard({ product, index = 0 }) {
                 <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z" />
               </svg>
             </button>
-            {/* Wired up in Phase 5 (soft delete action) */}
             <button
               type="button"
               title="Delete"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete?.(product);
+              }}
               className="rounded-lg border border-border p-2 text-muted transition hover:border-danger hover:text-danger"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

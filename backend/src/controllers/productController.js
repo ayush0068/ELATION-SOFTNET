@@ -197,6 +197,9 @@ exports.updateProduct = async (req, res) => {
     if (req.file) {
       deleteFileIfExists(product.picture);
       product.picture = `/uploads/products/${req.file.filename}`;
+    } else if (req.body.removePicture === 'true') {
+      deleteFileIfExists(product.picture);
+      product.picture = null;
     }
 
     await product.save();

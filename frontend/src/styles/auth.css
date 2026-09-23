@@ -1,0 +1,127 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(109, 94, 248, 0.12), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(255, 143, 171, 0.12), transparent 45%),
+    #f7f7fb;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 40px 36px;
+  box-shadow: 0 20px 45px -20px rgba(30, 20, 80, 0.25);
+  border: 1px solid #eeedf7;
+}
+
+.auth-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1f2430;
+  margin: 0 0 6px;
+}
+
+.auth-subtitle {
+  font-size: 0.95rem;
+  color: #5b6072;
+  margin: 0 0 28px;
+}
+
+.form-field {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-field label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #33394a;
+}
+
+.form-field input {
+  padding: 11px 14px;
+  border-radius: 10px;
+  border: 1.5px solid #e4e2f5;
+  font-size: 0.95rem;
+  color: #1f2430;
+  background: #fbfbfe;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-field input:focus {
+  outline: none;
+  border-color: #6d5ef8;
+  box-shadow: 0 0 0 3px rgba(109, 94, 248, 0.15);
+}
+
+.field-error {
+  font-size: 0.8rem;
+  color: #e0435c;
+}
+
+.auth-submit {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border: none;
+  border-radius: 12px;
+  background: #6d5ef8;
+  color: #fff;
+  font-size: 0.98rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.auth-submit:hover:not(:disabled) {
+  background: #5a4be0;
+}
+
+.auth-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 22px;
+  font-size: 0.9rem;
+  color: #5b6072;
+}
+
+.auth-footer a {
+  color: #6d5ef8;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.auth-alert {
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  margin-bottom: 18px;
+}
+
+.auth-alert--error {
+  background: rgba(224, 67, 92, 0.1);
+  color: #c22745;
+  border: 1px solid rgba(224, 67, 92, 0.25);
+}
+
+.auth-alert--success {
+  background: rgba(47, 179, 128, 0.1);
+  color: #1e8a5f;
+  border: 1px solid rgba(47, 179, 128, 0.25);
+}

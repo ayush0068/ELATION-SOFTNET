@@ -12,9 +12,6 @@ const sanitizeUser = (user) => ({
   mobile: user.mobile,
 });
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
-// @access  Public
 exports.registerUser = async (req, res) => {
   try {
     const { fullName, email, mobile, password } = req.body;

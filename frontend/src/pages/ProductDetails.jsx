@@ -55,7 +55,6 @@ export default function ProductDetails() {
     if (location.state?.flash) {
       navigate(location.pathname, { replace: true, state: {} });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchProduct = useCallback(async () => {
@@ -72,7 +71,6 @@ export default function ProductDetails() {
   }, [id]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern
     fetchProduct();
   }, [fetchProduct]);
 
@@ -166,7 +164,7 @@ export default function ProductDetails() {
           </div>
         ) : (
           <div className="animate-rise-in mt-6 grid grid-cols-1 gap-8 lg:grid-cols-[420px_1fr] lg:items-start">
-            {/* Left: image + quick facts */}
+            {/* left product details */}
             <div className="space-y-5 lg:sticky lg:top-6">
               <div className="relative aspect-square overflow-hidden rounded-2xl border border-border bg-surface">
                 {imageUrl ? (
@@ -229,7 +227,7 @@ export default function ProductDetails() {
               </div>
             </div>
 
-            {/* Right: info */}
+            {/* Right product details */}
             <div className="flex flex-col">
               <div className="flex flex-wrap items-center gap-2">
                 <span
@@ -291,7 +289,6 @@ export default function ProductDetails() {
                 </p>
               </div>
 
-              {/* Desktop actions moved to header; mobile gets a sticky bar below */}
             </div>
           </div>
         )}

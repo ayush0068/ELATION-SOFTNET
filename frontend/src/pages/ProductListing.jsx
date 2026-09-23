@@ -47,17 +47,12 @@ export default function ProductListing() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Consume a one-time flash message passed via navigation state (e.g. after
-  // creating/editing/deleting a product) and strip it from history state.
   useEffect(() => {
     if (location.state?.flash) {
       navigate(location.pathname, { replace: true, state: {} });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Debounce the search box so we don't fire a request on every keystroke.
-  // A filter change should also snap the user back to page 1.
   useEffect(() => {
     const t = setTimeout(() => {
       setSearch(searchInput.trim());
@@ -76,7 +71,6 @@ export default function ProductListing() {
     setPage(1);
   };
 
-  // Dropdown/category+status options straight from the backend, once
   useEffect(() => {
     api
       .get('/products/meta/options')
@@ -86,7 +80,6 @@ export default function ProductListing() {
         if (s?.length) setStatuses(s);
       })
       .catch(() => {
-        /* fall back to the local defaults above */
       });
   }, []);
 
@@ -111,7 +104,6 @@ export default function ProductListing() {
   }, [page, search, category, status]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount/filter-change pattern
     fetchProducts();
   }, [fetchProducts]);
 
@@ -122,8 +114,7 @@ export default function ProductListing() {
       await api.delete(`/products/${deleteTarget._id}`);
       setDeleteTarget(null);
       setToast({ type: 'success', message: `"${deleteTarget.name}" was deleted` });
-      // Refetch so pagination/counts stay accurate; if this was the last item
-      // on a page beyond the first, step back a page.
+
       if (products.length === 1 && page > 1) {
         setPage((p) => p - 1);
       } else {

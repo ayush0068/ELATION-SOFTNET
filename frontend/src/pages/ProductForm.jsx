@@ -137,14 +137,12 @@ export default function ProductForm() {
         if (s?.length) setStatuses(s);
       })
       .catch(() => {
-        /* fall back to local defaults */
       });
   }, []);
 
   useEffect(() => {
     if (!isEdit) return;
     let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- standard fetch-on-mount pattern
     setPageLoading(true);
     api
       .get(`/products/${id}`)
@@ -174,7 +172,6 @@ export default function ProductForm() {
     };
   }, [id, isEdit]);
 
-  // Revoke the object URL used for a locally-picked file when it's replaced/unmounted
   useEffect(() => {
     return () => {
       if (previewUrl && previewUrl.startsWith('blob:')) URL.revokeObjectURL(previewUrl);
@@ -389,7 +386,8 @@ export default function ProductForm() {
         )}
 
         <form onSubmit={handleSubmit} noValidate className="mt-7 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px] lg:items-start">
-          {/* Left: form sections */}
+
+          {/* form section */}
           <div className="space-y-6">
             <SectionCard
               step="STEP 1"
@@ -614,7 +612,6 @@ export default function ProductForm() {
               </div>
             </SectionCard>
 
-            {/* Desktop actions */}
             <div className="hidden justify-end gap-3 lg:flex">
               <button
                 type="button"
@@ -635,7 +632,7 @@ export default function ProductForm() {
             </div>
           </div>
 
-          {/* Right: live preview */}
+          {/* live preview*/}
           <div className="animate-rise-in hidden lg:sticky lg:top-6 lg:block" style={{ animationDelay: '80ms' }}>
             <div className="overflow-hidden rounded-2xl border border-border bg-surface">
               <div className="border-b border-border/70 px-5 py-4">
